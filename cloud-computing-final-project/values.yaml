@@ -1,4 +1,3 @@
-replicaCount: 1
 app:
   name: cloud-computing-final-project
   image:
@@ -19,13 +18,14 @@ app:
 
 postgresql:
   master:
-    host: master-db
+    host: postgres_master
     port: 5432
     database: postgres
     username: user
     password: password
+    initScript: files/00_init.sql
   slave:
-    host: slave-db
+    host: postgres_slave
     port: 5432
     database: postgres
     username: user

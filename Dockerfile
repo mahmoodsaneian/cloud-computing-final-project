@@ -8,6 +8,8 @@ RUN mvn clean package -DskipTests
 
 # Stage 2: Run
 FROM eclipse-temurin:17-jre
+RUN apt-get update && \
+apt-get install -y iputils-ping
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: postgres-master
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - port: 5432
-      targetPort: 5432
+      nodePort: 30001
   selector:
     app: postgres-master
 
@@ -16,9 +16,9 @@ kind: Service
 metadata:
   name: postgres-slave
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - port: 5432
-      targetPort: 5432
+      nodePort: 30002
   selector:
     app: postgres-slave

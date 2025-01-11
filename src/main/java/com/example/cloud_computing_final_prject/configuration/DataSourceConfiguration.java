@@ -32,7 +32,7 @@ public class DataSourceConfiguration {
 
     @Bean(name = "masterDataSource")
     public DataSource masterDataSource() {
-        // TODO
+        System.out.println(masterUrl);
         return DataSourceBuilder
                 .create()
                 .url(masterUrl)
@@ -45,6 +45,7 @@ public class DataSourceConfiguration {
 
     @Bean(name = "slaveDataSource")
     public DataSource slaveDataSource() {
+        System.out.println(slaveUrl);
         return DataSourceBuilder
                 .create()
                 .url(slaveUrl)

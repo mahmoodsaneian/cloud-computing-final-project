@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-slave
+  labels:
+    app: postgres-slave
+spec:
+  selector:
+    matchLabels:
+      app: postgres-slave
+  template:
+    metadata:
+      labels:
+        app: postgres-slave
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:14-alpine
+          command: [ "bash", "-c" ]
+          args:
+            - |
+              until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot --host={{ .Values.postgresql.master.host }} --port=5432
+              do
+              echo 'Waiting for primary to connect...'
+              sleep 1s
+              done
+              echo 'Backup done, starting replica...'
+              chown -R postgres:postgres /var/lib/postgresql/data
+              chmod 0700 /var/lib/postgresql/data
+              su - postgres -c "postgres -D /var/lib/postgresql/data"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-slave-configmap
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: slave-pvc

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-slave-configmap
+  labels:
+    app: postgres-slave-configmap
+data:
+  POSTGRES_DB: "postgres"
+  POSTGRES_USER: "user"
+  POSTGRES_PASSWORD: "password"
+  POSTGRES_MASTER_SERVICE_HOST: "{{ .Values.postgresql.master.host }}"
+  PGUSER: "replicator"
+  PGPASSWORD: "replicator_password"
