@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.conf.name }}
+data:
+  MASTER_HOST: "{{ .Values.app.conf.master_url }}"
+  SLAVE_HOST: "{{ .Values.app.conf.slave_url }}"
+  SERVER_PORT: "{{ .Values.app.conf.port }}"
+  MASTER_USERNAME: "{{ .Values.app.conf.master_user }}"
+  MASTER_PASSWORD:  "{{ .Values.app.conf.master_password }}"
+  SLAVE_USERNAME: "{{ .Values.app.conf.slave_user }}"
+  SLAVE_PASSWORD: "{{ .Values.app.conf.slave_password }}"

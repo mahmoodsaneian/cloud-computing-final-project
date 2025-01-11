@@ -1,89 +1,102 @@
 package com.example.cloud_computing_final_prject.configuration;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
+@EnableJpaRepositories(
+        entityManagerFactoryRef = "entityManagerFactory",
+        transactionManagerRef = "transactionManager",
+        basePackages = {"com.example.cloud_computing_final_prject.repository"}
+)
 public class DataSourceConfiguration {
 
-    @Value("${spring.datasource.master.url}")
+    @Value("${MASTER_HOST:jdbc:postgresql://master-svc:5432/postgres}")
     private String masterUrl;
 
-    @Value("${spring.datasource.slave.url}")
+    @Value("${MASTER_USER:user}")
+    private String masterUsername;
+
+    @Value("${MASTER_PASSWORD:password}")
+    private String masterPassword;
+
+    @Value("${SLAVE_HOST:jdbc:postgresql://slave-svc:5432/postgres}")
     private String slaveUrl;
 
-    @Value("${spring.datasource.slave.username}")
-    private String username;
+    @Value("${SLAVE_USER:user}")
+    private String slaveUsername;
 
-    @Value("${spring.datasource.slave.password}")
-    private String password;
+    @Value("${SLAVE_PASSWORD:password}")
+    private String slavePassword;
 
+    @Primary
     @Bean(name = "masterDataSource")
     public DataSource masterDataSource() {
-        System.out.println(masterUrl);
-        return DataSourceBuilder
-                .create()
-                .url(masterUrl)
-                .username(username)
-                .password(password)
-                .driverClassName("org.postgresql.Driver")
-                .build();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl(masterUrl);
+        dataSource.setUsername(masterUsername);
+        dataSource.setPassword(masterPassword);
+        return dataSource;
     }
 
 
     @Bean(name = "slaveDataSource")
     public DataSource slaveDataSource() {
-        System.out.println(slaveUrl);
-        return DataSourceBuilder
-                .create()
-                .url(slaveUrl)
-                .username(username)
-                .password(password)
-                .driverClassName("org.postgresql.Driver")
-                .build();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl(slaveUrl);
+        dataSource.setUsername(slaveUsername);
+        dataSource.setPassword(slavePassword);
+        return dataSource;
     }
 
-    @Bean
     @Primary
-    public DataSourceRouting dataSourceRouting(
-            @Qualifier("masterDataSource") DataSource masterDataSource,
-            @Qualifier("slaveDataSource") DataSource slaveDataSource
-    ) {
-        Map<Object, Object> dataSourceMap = new HashMap<>();
-        dataSourceMap.put("MASTER", masterDataSource);
-        dataSourceMap.put("SLAVE", slaveDataSource);
-
-        DataSourceRouting routingDataSource = new DataSourceRouting();
-        routingDataSource.setTargetDataSources(dataSourceMap);
-        routingDataSource.setDefaultTargetDataSource(masterDataSource);
-
-        return routingDataSource;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSourceRouting) {
-        return new DataSourceTransactionManager(dataSourceRouting);
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            @Qualifier("dataSourceRouting") DataSource dataSource,
-            EntityManagerFactoryBuilder builder) {
+    @Bean(name = "entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean mainEntityManagerFactory(
+            EntityManagerFactoryBuilder builder,
+            @Qualifier("masterDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.cloud_computing_final_prject.*")
+                .packages("com.example.cloud_computing_final_prject.data")
+                .persistenceUnit("master")
                 .build();
+    }
+
+    @Primary
+    @Bean(name = "mainTransactionManager")
+    public PlatformTransactionManager mainTransactionManager(
+            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
+
+
+    @Bean(name = "spareEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean spareEntityManagerFactory(
+            EntityManagerFactoryBuilder builder,
+            @Qualifier("slaveDataSource") DataSource dataSource) {
+        return builder
+                .dataSource(dataSource)
+                .packages("com.cloud.ordertrackingapp.entity")
+                .persistenceUnit("slave")
+                .build();
+    }
+
+    @Bean(name = "spareTransactionManager")
+    public PlatformTransactionManager spareTransactionManager(
+            @Qualifier("spareEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }

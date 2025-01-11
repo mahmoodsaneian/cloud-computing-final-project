@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: slave-pvc
+  name: {{  .Values.postgresql.slave.pvc.name  }}
   labels:
-    app: slave-postgres
+    app: {{ .Values.postgresql.slave.pvc.name }}
 spec:
   accessModes:
     - ReadWriteOnce

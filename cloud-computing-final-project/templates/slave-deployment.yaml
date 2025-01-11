@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgresql.slave.host }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.postgresql.slave.host }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgresql.slave.host }}
+    spec:
+      containers:
+        - name: {{ .Values.postgresql.slave.host }}
+          image: {{ .Values.postgresql.image.name }}:{{  .Values.postgresql.image.tag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.postgresql.slave.conf.name }}
+          command: [ "bash", "-c" ]
+          args:
+            - |
+              until pg_basebackup --pgdata=/var/lib/postgresql/data -R --slot=replication_slot --host={{ .Values.postgresql.master.svc.name }} --port=5432
+              do
+                echo 'Waiting for primary to connect...'
+                sleep 1s
+              done
+              echo 'Backup done, starting replica...'
+              chown -R postgres:postgres /var/lib/postgresql/data
+              chmod 0700 /var/lib/postgresql/data
+              su - postgres -c "postgres -D /var/lib/postgresql/data"
+
+      volumes:
+        - name: postgres-database
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgresql.slave.pvc.name }}

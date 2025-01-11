@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgresql.slave.svc.name }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.postgresql.slave.host }}
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgresql.slave.svc.name }}-nodeport
+  labels:
+    app: {{ .Values.postgresql.slave.svc.name }}-nodeport
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+      targetPort: 30002
+      protocol: TCP
+  selector:
+    app: {{ .Values.postgresql.slave.host }}
+
+
+
+

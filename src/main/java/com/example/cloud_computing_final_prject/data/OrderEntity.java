@@ -1,12 +1,18 @@
 package com.example.cloud_computing_final_prject.data;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "ORDERS")
-public class OrderEntity {
+public class OrderEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

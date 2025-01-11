@@ -1,32 +1,55 @@
 app:
   name: cloud-computing-final-project
+  port: 8080
   image:
-    repository: cloud-computing-final-project
-    tag: v2
+    name: cloud-computing-final-project
+    tag: v3
     pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
+  svc:
+    name: cloud-computing-final-project-service
+    type: LoadBalancer
     port: 8080
-  resources:
-    limits:
-      cpu: "1"
-      memory: "512Mi"
-    requests:
-      cpu: "500m"
-      memory: "256Mi"
+  conf:
+    name: app-conf
+    master_service: master-svc
+    slave_service: slave-svc
+    master_url: jdbc:postgresql://master-svc:5432/postgres
+    slave_url: jdbc:postgresql://slave-svc:5432/postgres
+    port: 8080
+    master_user: user
+    master_password: password
+    slave_user: user
+    slave_password: password
 
 
 postgresql:
+  image:
+    name: postgres
+    tag:  14-alpine
+  pv:
+    name: postgres-persistent-volume
   master:
-    host: postgres_master
+    host: master-postgres
     port: 5432
     database: postgres
     username: user
     password: password
     initScript: files/00_init.sql
+    svc:
+      name: master-svc
+    pvc:
+      name: master-pvc
+    conf:
+      name: master-conf
   slave:
-    host: postgres_slave
+    host: slave-postgres
     port: 5432
     database: postgres
     username: user
     password: password
+    pvc:
+      name: slave-pvc
+    svc:
+      name: slave-svc
+    conf:
+      name: slave-conf
