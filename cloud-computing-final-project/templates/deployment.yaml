@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cloud-computing-final-project.fullname" . }}
+  labels:
+    app: {{ include "cloud-computing-final-project.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "cloud-computing-final-project.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "cloud-computing-final-project.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.app.service.port }}
+          env:
+            # Master Database Configuration
+            - name: SPRING_DATASOURCE_MASTER_URL
+              value: "jdbc:postgresql://{{ .Values.postgresql.master.host }}:{{ .Values.postgresql.master.port }}/{{ .Values.postgresql.master.database }}"
+            - name: SPRING_DATASOURCE_MASTER_USERNAME
+              value: "{{ .Values.postgresql.master.username }}"
+            - name: SPRING_DATASOURCE_MASTER_PASSWORD
+              value: "{{ .Values.postgresql.master.password }}"
+
+            # Slave Database Configuration
+            - name: SPRING_DATASOURCE_SLAVE_URL
+              value: "jdbc:postgresql://{{ .Values.postgresql.slave.host }}:{{ .Values.postgresql.slave.port }}/{{ .Values.postgresql.slave.database }}"
+            - name: SPRING_DATASOURCE_SLAVE_USERNAME
+              value: "{{ .Values.postgresql.slave.username }}"
+            - name: SPRING_DATASOURCE_SLAVE_PASSWORD
+              value: "{{ .Values.postgresql.slave.password }}"
+
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}

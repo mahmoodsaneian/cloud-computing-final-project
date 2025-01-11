@@ -1,0 +1,32 @@
+replicaCount: 1
+app:
+  name: cloud-computing-final-project
+  image:
+    repository: cloud-computing-final-project
+    tag: v2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: "1"
+      memory: "512Mi"
+    requests:
+      cpu: "500m"
+      memory: "256Mi"
+
+
+postgresql:
+  master:
+    host: master-db
+    port: 5432
+    database: postgres
+    username: user
+    password: password
+  slave:
+    host: slave-db
+    port: 5432
+    database: postgres
+    username: user
+    password: password

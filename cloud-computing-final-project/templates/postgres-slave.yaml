@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-slave
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-slave
+  template:
+    metadata:
+      labels:
+        app: postgres-slave
+    spec:
+      containers:
+        - name: postgres-slave
+          image: postgres:14-alpine
+          env:
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgresql.slave.database }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.postgresql.slave.username }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ .Values.postgresql.slave.password }}"
+          ports:
+            - containerPort: 5432
