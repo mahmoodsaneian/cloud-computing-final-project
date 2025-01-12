@@ -89,7 +89,7 @@ public class DataSourceConfiguration {
             @Qualifier("slaveDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.cloud.ordertrackingapp.entity")
+                .packages("com.example.cloud_computing_final_prject.data")
                 .persistenceUnit("slave")
                 .build();
     }

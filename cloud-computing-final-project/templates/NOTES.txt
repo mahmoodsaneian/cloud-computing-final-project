@@ -1,6 +1,0 @@
-Your Spring Boot application has been deployed!
-
-1. Get the application URL by running:
-   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ include "cloud-computing-final-project.name" . }}" -o jsonpath="{.items[0].metadata.name}")
-   echo "Visit http://127.0.0.1:8080 to use your application"
-   kubectl port-forward $POD_NAME 8080:{{ .Values.app.service.port }}
