@@ -1,4 +1,4 @@
-package com.example.cloud_computing_final_prject.configuration;
+package com.example.cloudcomputingfinalproject.configuration;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,14 +12,14 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-
+import com.example.cloudcomputingfinalproject.entity.*;
 import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaRepositories(
         entityManagerFactoryRef = "entityManagerFactory",
         transactionManagerRef = "transactionManager",
-        basePackages = {"com.example.cloud_computing_final_prject.repository"}
+        basePackages = {"com.example.cloudcomputingfinalproject.repository"}
 )
 public class DataSourceConfiguration {
 
@@ -65,19 +65,19 @@ public class DataSourceConfiguration {
 
     @Primary
     @Bean(name = "entityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean mainEntityManagerFactory(
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder builder,
             @Qualifier("masterDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.cloud_computing_final_prject.data")
                 .persistenceUnit("master")
+                .packages("com.example.cloudcomputingfinalproject.entity")
                 .build();
     }
 
     @Primary
-    @Bean(name = "mainTransactionManager")
-    public PlatformTransactionManager mainTransactionManager(
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager(
             @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
@@ -89,7 +89,7 @@ public class DataSourceConfiguration {
             @Qualifier("slaveDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.cloud_computing_final_prject.data")
+                .packages("com.example.cloudcomputingfinalproject.entity")
                 .persistenceUnit("slave")
                 .build();
     }

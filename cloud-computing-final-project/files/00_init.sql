@@ -8,4 +8,4 @@ create table if not exists orders(
     status varchar(100),
     address varchar(100)
 );
-insert into orders(order_id, username, product, quantity, status, address) values (1, 'mahmood', 'cap', 1, 'pending', 'test');
+insert into orders(order_id, username, product, quantity, status, address) values (1, 'mahmood', 'cap', 1, 'PENDING', 'test');

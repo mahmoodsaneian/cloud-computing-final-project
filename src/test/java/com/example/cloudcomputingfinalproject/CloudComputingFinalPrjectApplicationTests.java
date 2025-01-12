@@ -1,4 +1,4 @@
-package com.example.cloud_computing_final_prject;
+package com.example.cloudcomputingfinalproject;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

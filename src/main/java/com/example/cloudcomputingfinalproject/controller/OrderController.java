@@ -1,8 +1,8 @@
-package com.example.cloud_computing_final_prject.controller;
+package com.example.cloudcomputingfinalproject.controller;
 
-import com.example.cloud_computing_final_prject.data.OrderData;
-import com.example.cloud_computing_final_prject.data.OrderStatus;
-import com.example.cloud_computing_final_prject.service.OrderService;
+import com.example.cloudcomputingfinalproject.data.OrderData;
+import com.example.cloudcomputingfinalproject.data.OrderStatus;
+import com.example.cloudcomputingfinalproject.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +15,7 @@ public class OrderController {
     }
 
     @GetMapping("/check-order-status/{orderId}")
-    public OrderStatus checkOrderStatus(@PathVariable int orderId) {
+    public String checkOrderStatus(@PathVariable int orderId) {
         return orderService.checkOrderStatus(orderId);
     }
 

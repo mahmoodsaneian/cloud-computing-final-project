@@ -1,4 +1,4 @@
-package com.example.cloud_computing_final_prject.data;
+package com.example.cloudcomputingfinalproject.data;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
-package com.example.cloud_computing_final_prject.repository;
+package com.example.cloudcomputingfinalproject.repository;
 
-import com.example.cloud_computing_final_prject.data.OrderEntity;
+import com.example.cloudcomputingfinalproject.entity.OrderEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -15,7 +15,7 @@ public class OrderRepository {
     @PersistenceContext(unitName = "slave")
     private EntityManager slaveEntityManager;
 
-    @Transactional(transactionManager = "mainTransactionManager")
+    @Transactional(transactionManager = "transactionManager")
     public OrderEntity save(OrderEntity entity) {
         masterEntityManager.persist(entity);
         return entity;

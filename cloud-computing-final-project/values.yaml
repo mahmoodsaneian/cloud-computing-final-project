@@ -3,7 +3,7 @@ app:
   port: 8080
   image:
     name: cloud-computing-final-project
-    tag: v3
+    tag: v5
     pullPolicy: IfNotPresent
   svc:
     name: cloud-computing-final-project-service

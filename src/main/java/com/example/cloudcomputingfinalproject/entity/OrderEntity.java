@@ -1,5 +1,6 @@
-package com.example.cloud_computing_final_prject.data;
+package com.example.cloudcomputingfinalproject.entity;
 
+import com.example.cloudcomputingfinalproject.data.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ORDERS")
+@Table(name = "orders")
 public class OrderEntity implements Serializable {
 
     @Id
@@ -29,7 +30,7 @@ public class OrderEntity implements Serializable {
     private int quantity;
 
     @Column(name = "status")
-    private OrderStatus status;
+    private String status;
 
     @Column(name = "address")
     private String address;
